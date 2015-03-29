@@ -77,11 +77,13 @@ public class AnySelect {
             Statement statement = connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery(sqlSelectStatement);
+            System.out.println("\nHere is the resultSet:");
+            System.out.println(resultSet);
 
             // use ResultSetMetaData to display column names and data
             ResultSetMetaData rsmd = resultSet.getMetaData();
+            System.out.println("\n\nHere is the rsmd: ");
             System.out.println(rsmd);
-            System.out.println("\n\n");
 
             // create header from ResultSetMetaData
             for(int i = 1; i <= rsmd.getColumnCount(); i++){
