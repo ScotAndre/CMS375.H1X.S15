@@ -1,7 +1,5 @@
 import javax.swing.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 /*
  *  AnySelect.java
@@ -58,6 +56,51 @@ public class AnySelect {
             System.out.println(e.getMessage());
         }
     }// end constructor
+
+    public String execute(String sqlSelectStatement){
+        String data = "";
+
+        connect();
+
+        try {
+            Statement statement = connection.createStatement();
+
+            ResultSet resultSet = statement.executeQuery(sqlSelectStatement);
+
+            // use ResultSetMetaData to display column names and data
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+
+            // create header from ResultSetMetaData
+            for(int i = 1; i <= rsmd.getColumnCount(); i++){
+                data += rsmd.getColumnName(i);
+            }
+            data += "\n";
+
+            // retrieve returned data from ResultSet using ResultSetMetaData
+            while(resultSet.next()){
+                for(int col = 1; col <= rsmd.getColumnCount(); col++){
+                    switch(rsmd.getColumnType(col)){
+                        case Types.NUMERIC:
+                            data += resultSet.getInt(col);
+                            break;
+                        case Types.VARCHAR:
+                        case Types.CHAR:
+                            data += resultSet.getString(col);
+                            break;
+                        case Types.TIMESTAMP:
+                            data += resultSet.getDate(col);
+                    }// end switch
+                }// end column loop
+                data += "\n";
+            }// end loop through records
+            statement.close();
+            connection.close();
+        } catch (SQLException sqle){
+            System.out.println("SQL Exception: " + sqle);
+            sqle.printStackTrace();
+        }
+        return data;
+    }// end execute() method
 
     public void connect() {
         String host = "oai.rollins.edu";
