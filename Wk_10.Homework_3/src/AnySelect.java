@@ -1,5 +1,16 @@
-import javax.swing.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /*
  *  AnySelect.java
@@ -69,10 +80,12 @@ public class AnySelect {
 
             // use ResultSetMetaData to display column names and data
             ResultSetMetaData rsmd = resultSet.getMetaData();
+            System.out.println(rsmd);
+            System.out.println("\n\n");
 
             // create header from ResultSetMetaData
             for(int i = 1; i <= rsmd.getColumnCount(); i++){
-                data += rsmd.getColumnName(i);
+                data += rsmd.getColumnName(i) + "\t";
             }
             data += "\n";
 
@@ -81,14 +94,14 @@ public class AnySelect {
                 for(int col = 1; col <= rsmd.getColumnCount(); col++){
                     switch(rsmd.getColumnType(col)){
                         case Types.NUMERIC:
-                            data += resultSet.getInt(col);
+                            data += resultSet.getInt(col) + "\t";
                             break;
                         case Types.VARCHAR:
                         case Types.CHAR:
-                            data += resultSet.getString(col);
+                            data += resultSet.getString(col) + "\t";
                             break;
                         case Types.TIMESTAMP:
-                            data += resultSet.getDate(col);
+                            data += resultSet.getDate(col) + "\t";
                     }// end switch
                 }// end column loop
                 data += "\n";
