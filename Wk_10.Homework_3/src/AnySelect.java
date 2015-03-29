@@ -1,7 +1,12 @@
+import javax.swing.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 /*
  *  AnySelect.java
  *
- *  Scot Andre
+ *  Scot Andre                                              sandre@rollins.edu
  *  CMS375 Spring 2015
  *  Professor Anderson
  *  31 March 2015
@@ -42,4 +47,61 @@
  *       these two statements?
  */
 public class AnySelect {
-}
+    private Connection connection;
+    private String dbUser = "";
+    private String dbPassword = "";
+
+    public AnySelect(){
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }// end constructor
+
+    public void connect() {
+        String host = "oai.rollins.edu";
+        String port = "1521";
+        String SID = "cms375";
+
+        // get user credentials if necessary
+        if (dbUser.equals("") && dbPassword.equals("")) {
+            JPanel credentialPanel = new JPanel();
+            JLabel userNameLabel = new JLabel("User Name: ");
+            JTextField userName = new JTextField(10);
+
+            JLabel passwordLabel = new JLabel("Password: ");
+            JPasswordField password = new JPasswordField(10);
+
+            credentialPanel.add(userNameLabel);
+            credentialPanel.add(userName);
+            credentialPanel.add(passwordLabel);
+            credentialPanel.add(password);
+            String[] options = {"OK", "Cancel"};
+
+            int option = JOptionPane.showOptionDialog(null, credentialPanel,
+                    "Enter Database Credentials", JOptionPane.NO_OPTION,
+                    JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+            if (option == 0) {
+                // choose OK button
+                char[] userPassword = password.getPassword();
+                dbUser = userName.getText();
+                dbPassword = new String(userPassword);
+            } else {
+                // choose Cancel Button
+                System.out.println("Exiting");
+                System.exit(1);
+            }
+        }
+
+        // connect to the database
+        try {
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@"
+                    + host + ":" + port + ":" + SID, dbUser, dbPassword);
+            System.out.println("Successfully connected to the database.");
+        } catch (SQLException e) {
+            System.out.println("SQL Exception: " + e.getMessage());
+        }
+    }
+}// end class
